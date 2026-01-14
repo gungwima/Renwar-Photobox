@@ -23,6 +23,7 @@ function initBookingPage() {
     
     // Initialize event listeners
     initEventListeners();
+    setupAutoSync();
     
     // Initialize time slots for default date
     const dateInput = document.getElementById('date');
@@ -33,6 +34,18 @@ function initBookingPage() {
     // Initialize package details
     updatePackageDetails();
     updateSummary();
+}
+function setupAutoSync() {
+    // Sync setiap 10 detik
+    setInterval(() => {
+        const dateInput = document.getElementById('date');
+        if (dateInput && dateInput.value) {
+            // Refresh hanya jika di step 2 (pilih waktu)
+            if (currentStep === 2) {
+                generateTimeSlotsWithBookedStatus(dateInput.value);
+            }
+        }
+    }, 10000); // 10 detik
 }
 
 /**
@@ -297,6 +310,9 @@ function generateTimeSlotsWithBookedStatus(date) {
     const timeSlotsContainer = document.getElementById('time-slots');
     if (!timeSlotsContainer) return;
     
+    // PERBAIKAN: Sync dulu sebelum generate
+    syncBookingsWithAdmin();
+    
     const bookedTimes = getBookedTimes(date);
     const startHour = 8;
     const endHour = 22;
@@ -305,6 +321,7 @@ function generateTimeSlotsWithBookedStatus(date) {
     timeSlotsContainer.innerHTML = '';
     
     let availableSlots = 0;
+    let bookedSlots = 0;
     
     // Generate time slots from 08:00 to 22:00 every 30 minutes
     for (let hour = startHour; hour <= endHour; hour++) {
@@ -312,15 +329,28 @@ function generateTimeSlotsWithBookedStatus(date) {
             if (hour === endHour && minute === 30) break;
             
             const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-            const timeSlot = createTimeSlotElement(timeString, bookedTimes.includes(timeString));
+            const isBooked = bookedTimes.includes(timeString);
+            const timeSlot = createTimeSlotElement(timeString, isBooked);
             
-            if (!bookedTimes.includes(timeString)) {
+            if (isBooked) {
+                bookedSlots++;
+                // PERBAIKAN: Tambah class booked dengan jelas
+                timeSlot.classList.add('booked');
+                timeSlot.style.backgroundColor = '#ff6b6b';
+                timeSlot.style.color = 'white';
+                timeSlot.style.opacity = '0.7';
+                timeSlot.style.cursor = 'not-allowed';
+                timeSlot.innerHTML = `${timeString} <br><small><i class="fas fa-ban"></i> Booked</small>`;
+            } else {
                 availableSlots++;
             }
             
             timeSlotsContainer.appendChild(timeSlot);
         }
     }
+    
+    // PERBAIKAN: Debug info
+    console.log(`Date: ${date}, Available: ${availableSlots}, Booked: ${bookedSlots}`);
     
     // Show message if no slots available
     if (availableSlots === 0) {
@@ -563,6 +593,9 @@ function updateConfirmationDetails() {
 /**
  * Handle booking confirmation
  */
+/**
+ * Handle booking confirmation
+ */
 function handleBookingConfirmation() {
     // Validate step 4 is active
     if (currentStep !== 4) {
@@ -580,11 +613,16 @@ function handleBookingConfirmation() {
         return;
     }
     
-    // Check if time is still available
+    // Check if time is still available (DENGAN SYNC)
     const bookedTimes = getBookedTimes(bookingData.date);
+    console.log('Checking availability for:', bookingData.time);
+    console.log('Already booked:', bookedTimes);
+    
     if (bookedTimes.includes(bookingData.time)) {
         alert('Maaf, waktu ' + bookingData.time + ' sudah dipesan oleh orang lain. Silakan pilih waktu lain.');
-        generateTimeSlotsWithBookedStatus(bookingData.date);
+        
+        // PERBAIKAN: Force refresh slots
+        forceRefreshTimeSlots();
         return;
     }
     
@@ -592,16 +630,23 @@ function handleBookingConfirmation() {
         // Save booking
         const bookingId = saveBookingToDB(bookingData);
         
+        // PERBAIKAN: Sync immediately
+        syncBookingsWithAdmin();
+        
         // Show WhatsApp confirmation
         showWhatsAppConfirmation(bookingData, bookingId);
         
-        // Refresh time slots
+        // PERBAIKAN: Refresh time slots dengan delay
         setTimeout(() => {
-            generateTimeSlotsWithBookedStatus(bookingData.date);
+            forceRefreshTimeSlots();
+            
+            // Tambah notifikasi visual
+            showNotification('Booking berhasil! Waktu telah di-reserve.');
         }, 1000);
         
     } catch (error) {
         alert('Gagal menyimpan booking: ' + error.message);
+        console.error('Booking error:', error);
     }
 }
 
@@ -871,3 +916,33 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+function syncBookingsWithAdmin() {
+    // Simpan timestamp terakhir sync
+    const lastSync = localStorage.getItem('last_sync') || 0;
+    const now = Date.now();
+    
+    // Sync setiap 5 detik
+    if (now - lastSync > 5000) {
+        // Ambil semua bookings dari localStorage user
+        const userBookings = getBookingsFromDB();
+        
+        // Simpan ke sessionStorage sebagai backup sync
+        sessionStorage.setItem('sync_bookings', JSON.stringify(userBookings));
+        
+        // Update last sync
+        localStorage.setItem('last_sync', now);
+        
+        console.log('Bookings synced:', userBookings.length);
+    }
+}
+
+/**
+ * Force refresh time slots
+ */
+function forceRefreshTimeSlots() {
+    const dateInput = document.getElementById('date');
+    if (dateInput && dateInput.value) {
+        generateTimeSlotsWithBookedStatus(dateInput.value);
+    }
+}

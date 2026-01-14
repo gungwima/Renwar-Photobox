@@ -87,7 +87,11 @@ function getBookedTimes(date) {
     const bookedTimes = [];
     
     bookings.forEach(booking => {
-        if (booking.date === date && booking.status !== 'cancelled') {
+        // PERBAIKAN: Tambah validasi status
+        if (booking.date === date && 
+            booking.status !== 'cancelled' && 
+            booking.status !== 'no-show') {
+            
             // Add main time
             bookedTimes.push(booking.time);
             
@@ -107,12 +111,18 @@ function getBookedTimes(date) {
                         currentMinute = 0;
                     }
                     
+                    // Batasi sampai jam 22:30
+                    if (currentHour >= 22 && currentMinute > 30) break;
+                    
                     const nextTime = `${currentHour.toString().padStart(2, '0')}:${currentMinute.toString().padStart(2, '0')}`;
                     bookedTimes.push(nextTime);
                 }
             }
         }
     });
+    
+    // PERBAIKAN: Tambah console log untuk debugging
+    console.log(`Booked times for ${date}:`, bookedTimes);
     
     return [...new Set(bookedTimes)];
 }

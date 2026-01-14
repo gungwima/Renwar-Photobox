@@ -193,6 +193,12 @@ nav a:hover {
     padding: 20px;
 }
 
+.modal-actions{
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
 .modal-content {
     background-color: white;
     border-radius: 10px;
@@ -353,4 +359,31 @@ iframe {
         font-size: 12px;
         padding: 10px 15px;
     }
+}
+/* ========== TIME SLOT STYLES ========== */
+.time-slot.booked {
+    background-color: #ff6b6b !important;
+    color: white !important;
+    border: 2px solid #ff4757 !important;
+    opacity: 0.7 !important;
+    cursor: not-allowed !important;
+    position: relative;
+    text-decoration: line-through;
+}
+
+.time-slot.booked::after {
+    content: "✗";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 20px;
+    font-weight: bold;
+    opacity: 0.5;
+}
+
+.time-slot.booked:hover {
+    transform: none !important;
+    box-shadow: none !important;
+    background-color: #ff6b6b !important;
 }
