@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Renwar Photobox</title>
+    
+    <!-- CSS Links -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/admin.css">
+    
+    <style>
+        /* Additional admin styles */
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .section-title h2 {
+            margin: 0;
+            font-size: 24px;
+            color: #2c3e50;
+        }
+        
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .quick-stat {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+        
+        .quick-stat .value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #3498db;
+            margin-bottom: 5px;
+        }
+        
+        .quick-stat .label {
+            font-size: 12px;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .booking-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        
+        .booking-item:last-child {
+            border-bottom: none;
+        }
+        
+        .booking-info h4 {
+            margin: 0 0 5px 0;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+        
+        .booking-info p {
+            margin: 0;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        
+        .booking-time {
+            background: #f8f9fa;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #3498db;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #95a5a6;
+        }
+        
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+        
+        .empty-state h3 {
+            margin: 0 0 10px 0;
+            font-size: 18px;
+        }
+        
+        .empty-state p {
+            margin: 0;
+            font-size: 14px;
+        }
+        
+        /* Modal improvements */
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        /* Status colors */
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        
+        .status-dot.pending { background-color: #f39c12; }
+        .status-dot.confirmed { background-color: #2ecc71; }
+        .status-dot.completed { background-color: #3498db; }
+        .status-dot.cancelled { background-color: #e74c3c; }
+        .status-dot.no-show { background-color: #7f8c8d; }
+        
+        /* Print styles */
+        @media print {
+            .sidebar, .filter-bar, .action-buttons, .btn {
+                display: none !important;
+            }
+            
+            .main-content {
+                margin-left: 0 !important;
+                padding: 0 !important;
+            }
+            
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            
+            th, td {
+                border: 1px solid #ddd;
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">RP</div>
+                <div class="logo-text">Admin Photobox</div>
+            </div>
+            
+            <nav class="nav-menu">
+                <ul>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active" data-page="dashboard">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-page="bookings">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Semua Booking</span>
+                            <span class="badge" id="pending-badge">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-page="calendar">
+                            <i class="fas fa-calendar-day"></i>
+                            <span>Kalender</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-page="reports">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Laporan</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-page="settings">
+                            <i class="fas fa-cog"></i>
+                            <span>Pengaturan</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="index.html" class="nav-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i>
+                            <span>Website Booking</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar">A</div>
+                    <div>
+                        <div class="user-name">Administrator</div>
+                        <div class="user-role">Super Admin</div>
+                    </div>
+                </div>
+                <button class="btn btn-sm btn-logout">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <h1 id="page-title">Dashboard</h1>
+                <div class="header-actions">
+                    <button class="btn btn-refresh" onclick="refreshAllData()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                    <div class="current-date">
+                        <i class="fas fa-calendar"></i>
+                        <span id="current-date">Loading...</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Page -->
+            <section id="dashboard-page" class="page-content active">
+                <!-- Quick Stats -->
+                <div class="quick-stats">
+                    <div class="quick-stat">
+                        <div class="value" id="stat-today">0</div>
+                        <div class="label">Booking Hari Ini</div>
+                    </div>
+                    <div class="quick-stat">
+                        <div class="value" id="stat-revenue">Rp 0</div>
+                        <div class="label">Pendapatan Bulan Ini</div>
+                    </div>
+                    <div class="quick-stat">
+                        <div class="value" id="stat-pending">0</div>
+                        <div class="label">Menunggu Konfirmasi</div>
+                    </div>
+                    <div class="quick-stat">
+                        <div class="value" id="stat-noshow">0</div>
+                        <div class="label">No-Show (30 hari)</div>
+                    </div>
+                </div>
+
+                <!-- Today's Bookings -->
+                <div class="card">
+                    <div class="section-title">
+                        <h2><i class="fas fa-calendar-check"></i> Booking Hari Ini</h2>
+                        <button class="btn btn-primary" onclick="showAddBookingModal()">
+                            <i class="fas fa-plus"></i> Tambah Booking
+                        </button>
+                    </div>
+                    
+                    <div id="today-bookings-list">
+                        <!-- Dynamic content -->
+                        <div class="empty-state">
+                            <i class="fas fa-calendar-times"></i>
+                            <h3>Tidak ada booking hari ini</h3>
+                            <p>Belum ada booking untuk tanggal hari ini</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Bookings -->
+                <div class="card">
+                    <div class="section-title">
+                        <h2><i class="fas fa-history"></i> Booking Terbaru</h2>
+                        <a href="#" class="btn-link" onclick="switchPage('bookings')">Lihat Semua →</a>
+                    </div>
+                    
+                    <div id="recent-bookings">
+                        <!-- Dynamic content -->
+                        <div class="empty-state">
+                            <i class="fas fa-clock"></i>
+                            <h3>Belum ada booking</h3>
+                            <p>Booking terbaru akan muncul di sini</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- All Bookings Page -->
+            <section id="bookings-page" class="page-content">
+                <div class="section-title">
+                    <h2><i class="fas fa-calendar-alt"></i> Semua Booking</h2>
+                    <div class="action-buttons">
+                        <button class="btn btn-secondary" onclick="printBookings()">
+                            <i class="fas fa-print"></i> Print
+                        </button>
+                        <button class="btn btn-success" onclick="exportData()">
+                            <i class="fas fa-download"></i> Export CSV
+                        </button>
+                        <button class="btn btn-primary" onclick="showAddBookingModal()">
+                            <i class="fas fa-plus"></i> Tambah Booking
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Filter Bar -->
+                <div class="filter-bar">
+                    <div class="filter-group">
+                        <label><i class="fas fa-calendar"></i> Tanggal:</label>
+                        <input type="date" id="filter-date" class="filter-control">
+                    </div>
+                    <div class="filter-group">
+                        <label><i class="fas fa-filter"></i> Status:</label>
+                        <select id="filter-status" class="filter-control">
+                            <option value="all">Semua Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
+                            <option value="no-show">No-Show</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label><i class="fas fa-box"></i> Paket:</label>
+                        <select id="filter-package" class="filter-control">
+                            <option value="all">Semua Paket</option>
+                            <option value="basic">Basic</option>
+                            <option value="premium">Premium</option>
+                            <option value="exclusive">Exclusive</option>
+                        </select>
+                    </div>
+                    <div class="filter-actions">
+                        <button class="btn btn-filter" onclick="loadBookingsTable()">
+                            <i class="fas fa-search"></i> Filter
+                        </button>
+                        <button class="btn btn-reset" onclick="resetFilters()">
+                            <i class="fas fa-redo"></i> Reset
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Bookings Table -->
+                <div class="table-container">
+                    <table id="all-bookings-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nama</th>
+                                <th>Tanggal</th>
+                                <th>Waktu</th>
+                                <th>Paket</th>
+                                <th>Orang</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Data akan diisi oleh JavaScript -->
+                            <tr>
+                                <td colspan="9" class="text-center">
+                                    <div class="empty-state">
+                                        <i class="fas fa-calendar-times"></i>
+                                        <p>Belum ada data booking</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="pagination" id="pagination">
+                    <button class="btn-pagination prev" onclick="prevPage()" disabled>
+                        <i class="fas fa-chevron-left"></i> Sebelumnya
+                    </button>
+                    <span class="page-info">Halaman <span id="current-page">1</span> dari <span id="total-pages">1</span></span>
+                    <button class="btn-pagination next" onclick="nextPage()" disabled>
+                        Selanjutnya <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Calendar Page -->
+            <section id="calendar-page" class="page-content">
+                <div class="section-title">
+                    <h2><i class="fas fa-calendar-day"></i> Kalender Booking</h2>
+                    <div class="calendar-nav">
+                        <button class="btn btn-calendar" onclick="changeMonth(-1)">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <div class="calendar-month" id="current-month">Januari 2024</div>
+                        <button class="btn btn-calendar" onclick="changeMonth(1)">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="calendar-view">
+                    <div class="calendar-header">
+                        <div class="calendar-legend">
+                            <div class="legend-item">
+                                <span class="legend-color confirmed"></span>
+                                <span>Confirmed</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color pending"></span>
+                                <span>Pending</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color completed"></span>
+                                <span>Completed</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color cancelled"></span>
+                                <span>Cancelled</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-today" onclick="goToToday()">
+                            <i class="fas fa-calendar-day"></i> Hari Ini
+                        </button>
+                    </div>
+                    
+                    <div class="calendar-weekdays">
+                        <div>Minggu</div>
+                        <div>Senin</div>
+                        <div>Selasa</div>
+                        <div>Rabu</div>
+                        <div>Kamis</div>
+                        <div>Jumat</div>
+                        <div>Sabtu</div>
+                    </div>
+                    
+                    <div class="calendar-days" id="calendar-days">
+                        <!-- Calendar days will be generated by JavaScript -->
+                    </div>
+                </div>
+                
+                <!-- Calendar Details -->
+                <div class="card" id="calendar-details" style="display: none;">
+                    <div class="section-title">
+                        <h3 id="selected-date-title">Detail Booking</h3>
+                        <button class="btn btn-close" onclick="hideCalendarDetails()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div id="calendar-booking-details">
+                        <!-- Booking details will be loaded here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reports Page -->
+            <section id="reports-page" class="page-content">
+                <div class="section-title">
+                    <h2><i class="fas fa-chart-bar"></i> Laporan & Analitik</h2>
+                    <div class="action-buttons">
+                        <button class="btn btn-secondary" onclick="printReport()">
+                            <i class="fas fa-print"></i> Print
+                        </button>
+                        <button class="btn btn-success" onclick="exportReport()">
+                            <i class="fas fa-file-excel"></i> Export Excel
+                        </button>
+                        <button class="btn btn-primary" onclick="generateReport()">
+                            <i class="fas fa-file-pdf"></i> Generate PDF
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Date Range Filter -->
+                <div class="filter-bar">
+                    <div class="filter-group">
+                        <label><i class="fas fa-calendar-alt"></i> Periode:</label>
+                        <input type="date" id="report-from" class="filter-control">
+                        <span class="filter-separator">sampai</span>
+                        <input type="date" id="report-to" class="filter-control">
+                    </div>
+                    <div class="filter-group">
+                        <label><i class="fas fa-filter"></i> Group By:</label>
+                        <select id="report-group" class="filter-control">
+                            <option value="day">Harian</option>
+                            <option value="week">Mingguan</option>
+                            <option value="month">Bulanan</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-filter" onclick="loadReportData()">
+                        <i class="fas fa-chart-line"></i> Tampilkan Laporan
+                    </button>
+                </div>
+                
+                <!-- Summary Cards -->
+                <div class="stats-cards">
+                    <div class="stat-card card-blue">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Total Booking</h3>
+                            <div class="stat-value" id="report-total-bookings">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card card-green">
+                        <div class="stat-icon">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Total Pendapatan</h3>
+                            <div class="stat-value" id="report-total-revenue">Rp 0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card card-orange">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Rata-rata Pengunjung</h3>
+                            <div class="stat-value" id="report-avg-visitors">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card card-red">
+                        <div class="stat-icon">
+                            <i class="fas fa-user-slash"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>No-Show Rate</h3>
+                            <div class="stat-value" id="report-noshow-rate">0%</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Charts Section -->
+                <div class="card">
+                    <div class="card-title">
+                        <i class="fas fa-chart-pie"></i> Distribusi Paket
+                    </div>
+                    <div id="package-chart-container">
+                        <canvas id="package-chart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Package Stats Table -->
+                <div class="card">
+                    <div class="card-title">
+                        <i class="fas fa-table"></i> Statistik per Paket
+                    </div>
+                    <div class="table-container">
+                        <table id="package-stats-table">
+                            <thead>
+                                <tr>
+                                    <th>Paket</th>
+                                    <th>Jumlah Booking</th>
+                                    <th>Pendapatan</th>
+                                    <th>Persentase</th>
+                                    <th>Rata-rata Orang</th>
+                                </tr>
+                            </thead>
+                            <tbody id="package-stats-body">
+                                <!-- Data akan diisi oleh JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Daily Stats -->
+                <div class="card">
+                    <div class="card-title">
+                        <i class="fas fa-chart-line"></i> Statistik Harian
+                    </div>
+                    <div id="daily-chart-container">
+                        <canvas id="daily-chart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Page -->
+            <section id="settings-page" class="page-content">
+                <div class="section-title">
+                    <h2><i class="fas fa-cog"></i> Pengaturan Studio</h2>
+                    <button class="btn btn-success" id="save-settings">
+                        <i class="fas fa-save"></i> Simpan Pengaturan
+                    </button>
+                </div>
+                
+                <div class="settings-container">
+                    <!-- Studio Info -->
+                    <div class="card">
+                        <div class="card-title">
+                            <i class="fas fa-info-circle"></i> Informasi Studio
+                        </div>
+                        <div class="form-group">
+                            <label>Nama Studio</label>
+                            <input type="text" id="studio-name" class="form-control" value="Renwar Photobox">
+                        </div>
+                        <div class="form-group">
+                            <label>Alamat Studio</label>
+                            <textarea id="studio-address" class="form-control" rows="3">Dauh Umah, Jalan Kenangan</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Nomor Telepon</label>
+                            <input type="text" id="studio-phone" class="form-control" value="+62 8123456789">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="studio-email" class="form-control" value="info@renwarphotobox.com">
+                        </div>
+                    </div>
+                    
+                    <!-- Operating Hours -->
+                    <div class="card">
+                        <div class="card-title">
+                            <i class="fas fa-clock"></i> Jam Operasional
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Jam Buka</label>
+                                <input type="time" id="open-time" class="form-control" value="08:00">
+                            </div>
+                            <div class="form-group">
+                                <label>Jam Tutup</label>
+                                <input type="time" id="close-time" class="form-control" value="22:00">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Durasi Slot (menit)</label>
+                            <select id="slot-duration" class="form-control">
+                                <option value="30">30 menit</option>
+                                <option value="60">60 menit</option>
+                                <option value="90">90 menit</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Hari Libur (pisahkan dengan koma)</label>
+                            <input type="text" id="holidays" class="form-control" placeholder="2024-01-01, 2024-12-25">
+                        </div>
+                    </div>
+                    
+                    <!-- Package Prices -->
+                    <div class="card">
+                        <div class="card-title">
+                            <i class="fas fa-tags"></i> Harga Paket
+                        </div>
+                        <div class="form-group">
+                            <label>Paket Basic</label>
+                            <div class="input-group">
+                                <span class="input-group-text">Rp</span>
+                                <input type="number" id="price-basic" class="form-control" value="150000">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Paket Premium</label>
+                            <div class="input-group">
+                                <span class="input-group-text">Rp</span>
+                                <input type="number" id="price-premium" class="form-control" value="250000">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Paket Exclusive</label>
+                            <div class="input-group">
+                                <span class="input-group-text">Rp</span>
+                                <input type="number" id="price-exclusive" class="form-control" value="350000">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Additional Charges -->
+                    <div class="card">
+                        <div class="card-title">
+                            <i class="fas fa-plus-circle"></i> Biaya Tambahan
+                        </div>
+                        <div class="form-group">
+                            <label>Tambahan per Orang</label>
+                            <div class="input-group">
+                                <span class="input-group-text">Rp</span>
+                                <input type="number" id="extra-person" class="form-control" value="35000">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Tambahan 30 Menit</label>
+                            <div class="input-group">
+                                <span class="input-group-text">Rp</span>
+                                <input type="number" id="extra-30min" class="form-control" value="50000">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Tambahan 60 Menit</label>
+                            <div class="input-group">
+                                <span class="input-group-text">Rp</span>
+                                <input type="number" id="extra-60min" class="form-control" value="90000">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Properti Tambahan</label>
+                            <div class="input-group">
+                                <span class="input-group-text">Rp</span>
+                                <input type="number" id="extra-props" class="form-control" value="15000">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- System Settings -->
+                    <div class="card">
+                        <div class="card-title">
+                            <i class="fas fa-sliders-h"></i> Pengaturan Sistem
+                        </div>
+                        <div class="form-group">
+                            <label>Notifikasi WhatsApp</label>
+                            <div class="form-check">
+                                <input type="checkbox" id="whatsapp-notif" class="form-check-input" checked>
+                                <label class="form-check-label" for="whatsapp-notif">Aktifkan notifikasi WhatsApp</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Konfirmasi Otomatis</label>
+                            <div class="form-check">
+                                <input type="checkbox" id="auto-confirm" class="form-check-input">
+                                <label class="form-check-label" for="auto-confirm">Auto-confirm booking baru</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Pengingat Booking</label>
+                            <select id="reminder-time" class="form-control">
+                                <option value="1">1 jam sebelum</option>
+                                <option value="2">2 jam sebelum</option>
+                                <option value="3">3 jam sebelum</option>
+                                <option value="24">1 hari sebelum</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Edit Booking Modal -->
+    <div id="editBookingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-title">Edit Booking</h3>
+                <button class="close-btn" onclick="closeModal('editBookingModal')">&times;</button>
+            </div>
+            <form id="booking-form-admin">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit-name"><i class="fas fa-user"></i> Nama Lengkap</label>
+                        <input type="text" id="edit-name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-phone"><i class="fas fa-phone"></i> Nomor WhatsApp</label>
+                        <input type="tel" id="edit-phone" class="form-control" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit-date"><i class="fas fa-calendar"></i> Tanggal Booking</label>
+                        <input type="date" id="edit-date" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-time"><i class="fas fa-clock"></i> Waktu Booking</label>
+                        <select id="edit-time" class="form-control" required>
+                            <!-- Time options will be populated by JavaScript -->
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit-package"><i class="fas fa-box"></i> Paket</label>
+                        <select id="edit-package" class="form-control" required>
+                            <option value="basic">Basic (Rp 150.000)</option>
+                            <option value="premium">Premium (Rp 250.000)</option>
+                            <option value="exclusive">Exclusive (Rp 350.000)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-people"><i class="fas fa-users"></i> Jumlah Orang</label>
+                        <input type="number" id="edit-people" class="form-control" min="1" max="10" value="1" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit-background"><i class="fas fa-image"></i> Background</label>
+                        <select id="edit-background" class="form-control">
+                            <option value="navy">Tirai Navy</option>
+                            <option value="green">Tirai Hijau</option>
+                            <option value="grey">Photobox Grey</option>
+                            <option value="retro">Retro Area</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-vehicle"><i class="fas fa-car"></i> Kendaraan</label>
+                        <select id="edit-vehicle" class="form-control">
+                            <option value="none">Tidak Bawa Kendaraan</option>
+                            <option value="motor">Motor</option>
+                            <option value="mobil">Mobil</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit-time-extra"><i class="fas fa-clock"></i> Tambahan Waktu</label>
+                        <select id="edit-time-extra" class="form-control">
+                            <option value="0">Tidak tambah waktu</option>
+                            <option value="30">+30 menit (Rp 50.000)</option>
+                            <option value="60">+60 menit (Rp 90.000)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-props"><i class="fas fa-gift"></i> Properti Tambahan</label>
+                        <select id="edit-props" class="form-control">
+                            <option value="false">Tidak</option>
+                            <option value="true">Ya (Rp 15.000)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit-status"><i class="fas fa-flag"></i> Status</label>
+                        <select id="edit-status" class="form-control">
+                            <option value="pending">Pending</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
+                            <option value="no-show">No-Show</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-total"><i class="fas fa-money-bill-wave"></i> Total (Rp)</label>
+                        <input type="number" id="edit-total" class="form-control" readonly>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="edit-notes"><i class="fas fa-sticky-note"></i> Catatan</label>
+                    <textarea id="edit-notes" class="form-control" rows="3" placeholder="Catatan untuk booking ini..."></textarea>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('editBookingModal')">Batal</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> Simpan Perubahan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Konfirmasi</h3>
+                <button class="close-btn" onclick="closeModal('confirmModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="confirm-message">Apakah Anda yakin?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('confirmModal')">Batal</button>
+                <button type="button" class="btn btn-danger" id="confirm-action">Ya, Lanjutkan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- WhatsApp Preview Modal -->
+    <div id="whatsappPreviewModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Preview Pesan WhatsApp</h3>
+                <button class="close-btn" onclick="closeModal('whatsappPreviewModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="whatsapp-preview">
+                    <div class="whatsapp-header">
+                        <i class="fab fa-whatsapp"></i> WhatsApp Message
+                    </div>
+                    <div class="whatsapp-content" id="whatsapp-preview-content">
+                        <!-- Message preview will be loaded here -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('whatsappPreviewModal')">Tutup</button>
+                <button type="button" class="btn btn-success" onclick="sendWhatsAppMessage()">
+                    <i class="fab fa-whatsapp"></i> Kirim WhatsApp
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notification-message">Perubahan berhasil disimpan!</span>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Memuat data...</p>
+        </div>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="assets/js/auth.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="assets/js/shared.js"></script>
+    <script src="assets/js/admin.js"></script>
+</body>
+</html>

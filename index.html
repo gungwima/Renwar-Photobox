@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="description" content="Renwar Photobox - Self Photo Studio terbaik">
+    <meta name="keywords" content="photo studio, self photo, photobox, foto studio, booking foto">
+    <title>Renwar Photobox - Self Photo Studio</title>
+    
+    <!-- CSS Links -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/booking.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">RP</div>
+                <span>Renwar Photobox</span>
+            </div>
+            <!-- <button class="menu-toggle" aria-label="Toggle menu">
+                <i class="fas fa-bars"></i>
+            </button> -->
+            <!-- <nav>
+                <ul>
+                    <li><a href="#">Beranda</a></li>
+                    <li><a href="#location">Lokasi</a></li>
+                    <li><a href="admin.html" target="_blank">Admin</a></li>
+                </ul>
+            </nav> -->
+        </header>
+        
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1>Self Photo Studio Terbaik</h1>
+            <p>Abadikan momen terbaik Anda dengan berbagai pilihan background dan properti eksklusif.</p>
+            <a href="#booking" class="btn">Booking Sekarang</a>
+        </section>
+        
+        <!-- Booking Form Section -->
+        <h2 class="section-title" id="booking">Form Pemesanan</h2>
+        
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+            <div class="step active" id="step1">
+                <div class="step-circle">1</div>
+                <div class="step-label">Data Diri</div>
+            </div>
+            <div class="step" id="step2">
+                <div class="step-circle">2</div>
+                <div class="step-label">Waktu & Paket</div>
+            </div>
+            <div class="step" id="step3">
+                <div class="step-circle">3</div>
+                <div class="step-label">Tambahan</div>
+            </div>
+            <div class="step" id="step4">
+                <div class="step-circle">4</div>
+                <div class="step-label">Konfirmasi</div>
+            </div>
+        </div>
+        
+        <!-- Main Booking Container -->
+        <div class="booking-container">
+            <!-- Form Side -->
+            <div class="booking-form">
+                <!-- Step 1: Data Diri -->
+                <div class="form-section active" id="form-step1">
+                    <h3>Data Diri</h3>
+                    <div class="form-group">
+                        <label for="name">Nama Lengkap</label>
+                        <input type="text" id="name" class="form-control" placeholder="Masukkan nama anda">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Nomor WhatsApp</label>
+                        <input type="tel" id="phone" class="form-control" placeholder="+62 8123456789">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" class="form-control" placeholder="nama@email.com">
+                    </div>
+                    <div class="form-navigation">
+                        <div></div>
+                        <button type="button" class="btn next-step" data-next="2">Selanjutnya</button>
+                    </div>
+                </div>
+                
+                <!-- Step 2: Waktu & Paket -->
+                <div class="form-section" id="form-step2">
+                    <h3>Waktu & Paket</h3>
+                    <div class="form-group">
+                        <label for="date">Tanggal Booking</label>
+                        <input type="date" id="date" class="form-control" style="font-family: 'Poppins', sans-serif; cursor: pointer;">
+                    </div>
+                    <div class="form-group">
+                        <label>Waktu Booking</label>
+                        <p class="time-note">Jam yang dipilih adalah jam mulai fotonya</p>
+                        <div class="time-slots" id="time-slots">
+                            <!-- Time slots akan diisi oleh JavaScript -->
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Pilih Paket</label>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="package1" name="package" value="basic" data-price="150000">
+                                <label for="package1">Basic<br>Rp 150.000</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="package2" name="package" value="premium" data-price="250000">
+                                <label for="package2">Premium<br>Rp 250.000</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="package3" name="package" value="exclusive" data-price="350000">
+                                <label for="package3">Exclusive<br>Rp 350.000</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Pilih Background</label>
+                        <p class="note">*Silakan pilih paket terlebih dahulu</p>
+                        <div class="background-options">
+                            <div class="background-option">
+                                <input type="radio" id="bg1" name="background" value="navy">
+                                <label for="bg1">
+                                    <div class="bg-color bg-navy"></div>
+                                </label>
+                                <div class="bg-label">Tirai Navy</div>
+                            </div>
+                            <div class="background-option">
+                                <input type="radio" id="bg2" name="background" value="green">
+                                <label for="bg2">
+                                    <div class="bg-color bg-green"></div>
+                                </label>
+                                <div class="bg-label">Tirai Hijau</div>
+                            </div>
+                            <div class="background-option">
+                                <input type="radio" id="bg3" name="background" value="grey">
+                                <label for="bg3">
+                                    <div class="bg-color bg-grey"></div>
+                                </label>
+                                <div class="bg-label">Photobox Grey</div>
+                            </div>
+                            <div class="background-option">
+                                <input type="radio" id="bg4" name="background" value="retro">
+                                <label for="bg4">
+                                    <div class="bg-color bg-retro"></div>
+                                </label>
+                                <div class="bg-label">Retro Area</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-navigation">
+                        <button type="button" class="btn prev-step" data-prev="1">Kembali</button>
+                        <button type="button" class="btn next-step" data-next="3">Selanjutnya</button>
+                    </div>
+                </div>
+                
+                <!-- Step 3: Tambahan -->
+                <div class="form-section" id="form-step3">
+                    <h3>Tambahan</h3>
+                    <div class="add-ons">
+                        <h4>Penambahan Orang (Rp 35.000/orang, maks 1 orang)</h4>
+                        <div class="counter">
+                            <button type="button" class="counter-btn" id="decrease-person">-</button>
+                            <span class="counter-value" id="person-count">1</span>
+                            <button type="button" class="counter-btn" id="increase-person">+</button>
+                            <span class="counter-note">(Maks: 4 orang termasuk Anda)</span>
+                        </div>
+                    </div>
+                    
+                    <div class="add-ons">
+                        <h4>Penambahan Waktu</h4>
+                        <p class="note">Jika merasa waktunya kurang, Anda dapat menambah waktunya</p>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="time-extra0" name="time-extra" value="0" checked>
+                                <label for="time-extra0">Tidak tambah waktu</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="time-extra30" name="time-extra" value="30">
+                                <label for="time-extra30">+30 menit (Rp 50.000)</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="time-extra60" name="time-extra" value="60">
+                                <label for="time-extra60">+60 menit (Rp 90.000)</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="add-ons">
+                        <h4>Kendaraan</h4>
+                        <p class="note">Pilih jenis kendaraan agar kami bisa mengatur tempat parkir</p>
+                        <div class="vehicle-options">
+                            <div class="vehicle-option">
+                                <input type="radio" id="vehicle-none" name="vehicle" value="none" checked>
+                                <label for="vehicle-none">
+                                    <i class="fas fa-walking"></i>
+                                    <span>Tidak Bawa Kendaraan</span>
+                                </label>
+                            </div>
+                            <div class="vehicle-option">
+                                <input type="radio" id="vehicle-motor" name="vehicle" value="motor">
+                                <label for="vehicle-motor">
+                                    <i class="fas fa-motorcycle"></i>
+                                    <span>Motor</span>
+                                </label>
+                            </div>
+                            <div class="vehicle-option">
+                                <input type="radio" id="vehicle-mobil" name="vehicle" value="mobil">
+                                <label for="vehicle-mobil">
+                                    <i class="fas fa-car"></i>
+                                    <span>Mobil</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="props">
+                        <label for="props">Tambahan properti bando (Rp 15.000)</label>
+                    </div>
+                    
+                    <div class="form-navigation">
+                        <button type="button" class="btn prev-step" data-prev="2">Kembali</button>
+                        <button type="button" class="btn next-step" data-next="4">Selanjutnya</button>
+                    </div>
+                </div>
+                
+                <!-- Step 4: Konfirmasi -->
+                <div class="form-section" id="form-step4">
+                    <h3>Konfirmasi Pemesanan</h3>
+                    <p class="confirmation-note">Silakan periksa kembali data pemesanan Anda sebelum melakukan booking.</p>
+                    
+                    <div class="booking-details">
+                        <ul class="booking-details-list" id="booking-summary-details">
+                            <!-- Detail booking akan diisi oleh JavaScript -->
+                        </ul>
+                    </div>
+                    
+                    <div class="form-navigation">
+                        <button type="button" class="btn prev-step" data-prev="3">Kembali</button>
+                        <button type="button" class="btn btn-secondary" id="confirm-booking">Booking Sekarang</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Summary Side -->
+            <div class="booking-summary">
+                <h3>TOTAL PEMBAYARAN</h3>
+                <div class="total-payment">
+                    <div class="price" id="total-price">Rp. 0</div>
+                    <p id="session-info">Belum memilih paket</p>
+                    
+                    <ul class="package-details" id="package-details">
+                        <li id="detail-duration">0 Menit Durasi Foto</li>
+                        <li id="detail-people">Berlaku 1 - 4 orang</li>
+                        <li id="detail-print">0 Print Ukuran 4R</li>
+                        <li id="detail-softcopy">All Softcopy File</li>
+                        <li id="detail-costume">Free Costume & Accessories</li>
+                    </ul>
+                    
+                    <!-- GANTI kode iframe yang ada (sekitar baris 180-185) dengan: -->
+<div class="location">
+    <h4>Lokasi Studio :</h4>
+    <p><strong>Renwar Photobox</strong></p>
+    <!-- <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3944.165114742016!2d115.1735078!3d-8.6678588!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd247bd4c8f7b0f%3A0x4030bfbca7d2c40!2sRenwar%20Photobox!5e0!3m2!1sen!2sid!4v1698849876545!5m2!1sen!2sid" 
+            width="100%" 
+            height="250" 
+            style="border:0;" 
+            allowfullscreen="" 
+            loading="lazy" 
+            referrerpolicy="no-referrer-when-downgrade">
+    </iframe> -->
+    <p>Jln. Bypass Ngurah Rai </p>
+    <p class="map-link">
+        <a href="https://maps.app.goo.gl/xXscdTa7htuNfFEBA" target="_blank" style="color: #3498db; text-decoration: none;">
+            <i class="fas fa-map-marker-alt"></i> Lihat peta lebih besar
+        </a>
+    </p>
+</div>
+
+                    
+                   <!-- Tambahkan di dalam .footer (sebelum atau setelah copyright) -->
+<div class="footer">
+    <p style="margin-bottom: 10px;">
+        <a href="https://maps.app.goo.gl/xXscdTa7htuNfFEBA" 
+           target="_blank" 
+           style="color: #3498db; text-decoration: none;">
+            <i class="fas fa-map-marker-alt"></i> Buka di Google Maps
+        </a>
+    </p>
+    <p>© <span id="current-year"></span> Renwar Photobox. All Rights Reserved.</p>
+</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <p>© <span id="current-year"></span> Renwar Photobox. All Rights Reserved.</p>
+        </div>
+    </div>
+    
+    <!-- WhatsApp Notification Modal -->
+    <div id="whatsapp-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Konfirmasi WhatsApp</h3>
+                <button class="close-btn" onclick="closeModal('whatsapp-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Booking Anda berhasil! Kami akan mengirimkan detail konfirmasi ke WhatsApp Anda.</p>
+                <p>Nomor WhatsApp: <strong id="whatsapp-number"></strong></p>
+                <div class="modal-actions">
+                    <a id="whatsapp-link" href="#" target="_blank" class="btn btn-success">
+                        <i class="fab fa-whatsapp"></i> Buka WhatsApp
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        Pemesanan berhasil! Detail telah dikirim ke WhatsApp Anda.
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="assets/js/shared.js"></script>
+    <script src="assets/js/booking.js"></script>
+</body>
+</html>
