@@ -658,9 +658,11 @@ function collectBookingData() {
  * @param {string} bookingId - Booking ID
  */
 function showWhatsAppConfirmation(bookingData, bookingId) {
-    // Format phone number
-    const phoneNumber = bookingData.phone.replace(/\D/g, '');
-    let cleanPhone = phoneNumber;
+    // NOMOR ADMIN - TETAP KE NOMOR ANDA
+    const adminPhone = "081529830329"; // Ganti dengan nomor admin Anda
+    
+    // Format nomor admin untuk WhatsApp
+    let cleanPhone = adminPhone.replace(/\D/g, '');
     
     if (cleanPhone.startsWith('0')) {
         cleanPhone = '62' + cleanPhone.substring(1);
@@ -670,35 +672,33 @@ function showWhatsAppConfirmation(bookingData, bookingId) {
         cleanPhone = '62' + cleanPhone;
     }
     
-    // Validate phone number
-    if (cleanPhone.length < 10) {
-        alert('Nomor WhatsApp tidak valid. Pastikan nomor benar.');
-        return;
-    }
-    
-    // Create WhatsApp message
+    // Create WhatsApp message untuk ADMIN
     const messageLines = [
-        `Halo ${bookingData.name},`,
+        `📋 *NEW BOOKING - RENWAR PHOTOBOX*`,
         '',
-        'Booking Anda di Renwar Photobox berhasil!',
+        `📅 *Tanggal:* ${formatDate(bookingData.date)}`,
+        `⏰ *Waktu:* ${bookingData.time}`,
+        `👤 *Nama:* ${bookingData.name}`,
+        `📞 *WhatsApp:* ${bookingData.phone}`,
+        `📧 *Email:* ${bookingData.email || '-'}`,
+        `🎯 *Paket:* ${bookingData.package.toUpperCase()}`,
+        `👥 *Jumlah Orang:* ${bookingData.people} orang`,
+        `🎨 *Background:* ${getBackgroundName(bookingData.background)}`,
+        `🚗 *Kendaraan:* ${getVehicleName(bookingData.vehicle)}`,
+        `⏱️ *Tambahan Waktu:* ${bookingData.timeExtra || 0} menit`,
+        `🎁 *Properti Tambahan:* ${bookingData.props ? 'Ya' : 'Tidak'}`,
+        `💰 *Total:* Rp ${formatNumber(bookingData.total)}`,
+        `🆔 *ID Booking:* ${bookingId}`,
+        `📊 *Status:* Pending`,
         '',
-        '📋 *Detail Booking*:',
-        `ID: ${bookingId}`,
-        `Tanggal: ${formatDate(bookingData.date)}`,
-        `Waktu: ${bookingData.time}`,
-        `Paket: ${bookingData.package}`,
-        `Jumlah Orang: ${bookingData.people}`,
-        `Total: Rp ${formatNumber(bookingData.total)}`,
-        'Status: Menunggu konfirmasi',
+        `📍 *Lokasi:* Renwar Photobox, Jln Bypass Ngurah Rai`,
         '',
-        'Silahkan datang tepat waktu.',
-        'Terima kasih!'
     ];
     
     const message = encodeURIComponent(messageLines.join('\n'));
     const whatsappLink = `https://wa.me/${cleanPhone}?text=${message}`;
     
-    // Update modal content
+    // Update modal content untuk PELANGGAN
     document.getElementById('whatsapp-number').textContent = bookingData.phone;
     const whatsappBtn = document.getElementById('whatsapp-link');
     whatsappBtn.href = whatsappLink;
@@ -709,6 +709,9 @@ function showWhatsAppConfirmation(bookingData, bookingId) {
     // Add click handler for WhatsApp button
     whatsappBtn.onclick = function(e) {
         window.open(whatsappLink, '_blank');
+        
+        // Juga kirim notifikasi ke pelanggan (opsional)
+        sendCustomerNotification(bookingData, bookingId);
         
         setTimeout(() => {
             closeModal('whatsapp-modal');

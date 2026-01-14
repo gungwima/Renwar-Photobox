@@ -1710,8 +1710,9 @@ function sendWhatsAppMessage() {
         return;
     }
     
-    // Format phone number
-    let phone = booking.phone.replace(/\D/g, '');
+    // NOMOR ADMIN - SELALU KE NOMOR ANDA
+    const adminPhone = "081529830329";
+    let phone = adminPhone.replace(/\D/g, '');
     
     if (phone.startsWith('0')) {
         phone = '62' + phone.substring(1);
@@ -1737,6 +1738,7 @@ function sendWhatsAppMessage() {
     // Show success message
     showNotification('WhatsApp dibuka di tab baru!', 'success');
 }
+
 
 // ========== UTILITY FUNCTIONS ==========
 
